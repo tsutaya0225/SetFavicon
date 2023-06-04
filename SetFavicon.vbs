@@ -14,7 +14,7 @@ Dim arrArgs: Set arrArgs=WScript.Arguments
 
 '引数がなければ終了
 If arrArgs.Count=0 Then
-	MsgBox "ファイルまたはフォルダをドロップしてください。", vbOkOnly+vbInformation, "SetFavicon"
+	MsgBox("ファイルまたはフォルダをドロップしてください。", vbOkOnly+vbInformation, "SetFavicon")
 	Wscript.Quit
 End If
 
@@ -24,7 +24,7 @@ If Not objFS.FolderExists(faviconPath) Then objFS.CreateFolder(faviconPath)
 
 'main()
 	RecProcess arrArgs
-	MsgBox "終了しました。", vbOkOnly+vbInformation, "SetFavicon"
+	MsgBox("終了しました。", vbOkOnly+vbInformation, "SetFavicon")
 	Set objShell=Nothing: Set objFS=Nothing
 'end of main
 
@@ -38,7 +38,7 @@ Sub RecProcess(arrArgs)
 			RecProcess objFS.GetFolder(path).Files
 			RecProcess objFS.GetFolder(path).SubFolders
 		Else
-			MsgBox path & "は存在しません。" & vbCrLf & "次のファイルを処理します。", vbOKOnly+vbExclamation, "SetFavicon"
+			MsgBox(path & "は存在しません。" & vbCrLf & "次のファイルを処理します。", vbOKOnly+vbExclamation, "SetFavicon")
 		End if
 	Next
 End Sub
@@ -51,9 +51,10 @@ Sub SetFavicon(srcFilename)
 	Dim dstFilename: dstFilename=""
 	Select Case LCase(objFS.GetExtensionName(srcFilename))
 		Case "url"
-			'何もしない
+			srcFilename=dstFilename
 		Case "website"
-			Select Case MsgBox(srcFilename & "はInternet Explorerのピン止めショートカットです。" & vbCrLf & "インターネットショートカットに変換してよろしいですか？。", vbYesNo+vbQuestion, "SetFavicon")
+			Select Case MsgBox(srcFilename & "はInternet Explorerのピン止めショートカットです。" & vbCrLf & _
+							   "インターネットショートカットに変換してよろしいですか？。", vbYesNo+vbQuestion, "SetFavicon")
 				Case vbYes
 					'新しい.urlファイル名を生成
 					dstFilename=objFS.GetParentFolderName(srcFilename) & "\" & objFS.getBaseName(srcFilename) & ".url"
@@ -62,30 +63,28 @@ Sub SetFavicon(srcFilename)
 							Case vbYes
 								'何もしない
 							Case vbNo
-								MsgBox srcFilename & "は処理しませんでした。" & "次のファイルを処理します。", vbOkOnly+vbInformation, "SetFavicon"
+								MsgBox(srcFilename & "は処理しませんでした。" & "次のファイルを処理します。", vbOkOnly+vbInformation, "SetFavicon")
 								Exit Sub
 							Case Else
-								MsgBox "未定義のエラーです。" & vbCrLf & "次のファイルを処理します。", vbOkOnly+vbCritical, "SetFavicon"
+								MsgBox()"未定義のエラーです。" & vbCrLf & "次のファイルを処理します。", vbOkOnly+vbCritical, "SetFavicon")
 								Exit Sub
 						End Select
 					End If
 				Case vbNo
-					MsgBox srcFilename & "は処理しませんでした。" & vbCrLf & "次のファイルを処理します。", vbOkOnly+vbInformation, "SetFavicon"
+					MsgBox(srcFilename & "は処理しませんでした。" & vbCrLf & "次のファイルを処理します。", vbOkOnly+vbInformation, "SetFavicon")
 					Exit Sub
 				Case Else
-					MsgBox "未定義のエラーです。" & vbCrLf & "次のファイルを処理します。", vbOkOnly+vbCritical, "SetFavicon"
+					MsgBox("未定義のエラーです。" & vbCrLf & "次のファイルを処理します。", vbOkOnly+vbCritical, "SetFavicon")
 					Exit Sub
 			End Select
 		Case Else
-			MsgBox srcFilename & "はインターネットショートカットではありません。" & vbCrLf & "次のファイルを処理します。", vbOkOnly+vbExclamation, "SetFavicon"
+			MsgBox(srcFilename & "はインターネットショートカットではありません。" & vbCrLf & "次のファイルを処理します。", vbOkOnly+vbExclamation, "SetFavicon")
 			Exit Sub
 	End Select
-	'ピン止めショートカット以外は.urlファイルを上書き
-	if dstFilename="" Then dstFilename=srcFilename
 
 	'.urlまたは.websiteファイルの内容を取得
 	Dim strLine, strURL, strIconFile, strIconIndex, strHotKey, strIDList
-	strURL="": strIconFile="": strIconIndex="": strHotKey="": strIDList=""
+	strURL="": strIconFile="": strIconIndex="0": strHotKey="0": strIDList="0"
 	Dim objSrcFile: Set objSrcFile = objFS.OpenTextFile(srcFilename, ForReading)
 	Do Until objSrcFile.AtEndOfStream
 		strLine=objSrcFile.ReadLine
@@ -103,13 +102,9 @@ Sub SetFavicon(srcFilename)
 		End Select
 	Loop
 	If strURL="" Then
-		MsgBox srcFilename & "には、URLが設定されていません。" & vbCrLf & "次のファイルを処理します。", vbOkOnly+vbExclamation, "SetFavicon"
+		MsgBox(srcFilename & "には、URLが設定されていません。" & vbCrLf & "次のファイルを処理します。", vbOkOnly+vbExclamation, "SetFavicon")
 		Exit Sub
 	End If
-	If strIconFile="" Then strIconFile=""
-	If StrIconIndex="" Then strIconIndex="0"
-	If StrHotKey="" Then StrHotKey="0"
-	If strIDList="" Then strIDList="0"
 	objsrcFile.Close
 '	出力テスト
 	if MsgBox("strURL = " & strURL, vbOkCancel, "test")=vbCancel Then Wscript.Quit
@@ -144,12 +139,12 @@ Sub SetFavicon(srcFilename)
 			End If
 		End If
 	Next
-	'linkタグが見つからない場合
-	If faviconURL="" And strIconFile="" Then
-		MsgBox srcFilename & "にはアイコンが設定されていません。" & vbCrLf & "次のファイルを処理します。", vbOkOnly+vbExclamation, "SetFavicon"
-		Exit Sub
-	Else
+	'faviconのURLが取得できなかった場合
+	If faviconURL="" And strIconFile<>"" Then
 		faviconURL=strIconFile
+	Else 'IconFileが特定できなかった場合
+		MsgBox(srcFilename & "にはアイコンが設定されていません。" & vbCrLf & "次のファイルを処理します。", vbOkOnly+vbExclamation, "SetFavicon")
+		Exit Sub
 	End If
 '	出力テスト
 	if MsgBox("faviconURL = " & faviconURL, vbOkCancel, "test")=vbCancel Then Wscript.Quit
@@ -174,7 +169,7 @@ Sub SetFavicon(srcFilename)
 		objStream.Close
 		Set objStream=Nothing
 	Else
-		MsgBox "アイコンのダウンロードに失敗しました。" & vbCrLf & faviconURL & vbCrLf,  "次のファイルを処理します。", vbOkOnly+vbExclamation, "SetFavicon"
+		MsgBox("アイコンのダウンロードに失敗しました。" & vbCrLf & faviconURL & vbCrLf,  "次のファイルを処理します。", vbOkOnly+vbExclamation, "SetFavicon")
 		exit Sub
 	End If
 	Set objXmlHttp=Nothing
@@ -182,7 +177,7 @@ Sub SetFavicon(srcFilename)
 	If MsgBox("faviconFilename = " & faviconFilename, vbOkCancel, "test")=vbCancel Then Wscript.Quit
 
 	'.urlファイルを再構成
-	Dim objURLFile : Set objURLFile=objFS.CreateTextFile(srcFilename, ForWriting, True) 'If it does not exist, create a new file.
+	Dim objURLFile : Set objURLFile=objFS.CreateTextFile(dstFilename, ForWriting, True) 'ファイルが存在しない場合は作成する
 	objURLFile.WriteLine("[InternetShortcut]")
 	objURLFile.WriteLine("URL=" & strURL)
 	objURLFile.WriteLine("IconFile=" & faviconFilename)
@@ -193,13 +188,15 @@ Sub SetFavicon(srcFilename)
 '	出力テスト
 	If MsgBox("URL = " & strURL, vbOkCancel, "test")=vbCancel Then Wscript.Quit
 
-	'変更後の.urlファイルのアイコンを反映 ※反映させる方法が分からない！別の方法を考えること※
-	if faviconFilename<>"" Then
-		Dim objApp : Set objapp=CreateObject("Shell.Application")
-		Dim objFolder : Set objFolder=objapp.Namespace(objFS.GetParentFolderName(newFilename))
-		Dim objFolderItem : Set objFolderItem=objFolder.ParseName(objFS.GetFileName(newFilename))
-		objFolderItem.InvokeVerb("ClearIconCache")
-	End If
+	'変更後の.urlファイルのプロパティを書き換える '.urlファイルにはIconLocationプロパティがないため.lnkにリネーム
+	Dim tmpFilename: tmpFilename=Left(dstFilename, InStrRev(dstFilename, ".")-1) & ".lnk"
+	objShell.MoveFile dstFilename, tmpFilename
+	' リネームした.lnkファイルのアイコンを変更
+	Dim objLinkFile: Set obiLinkFile=objShell.CreateShortcut(tmpFilename)
+	objLinkFile.IconLocation=faviconFilename
+	objLinkFile.Save
+	'リネームした.urlファイルを元に戻す
+	objShell.MoveFile tmpfilename, dstFilename
 '	出力テスト
-	MsgBox "End of SubRoutine", vbOkOnly, "test"
+	MsgBox("End of SubRoutine", vbOkOnly, "test")
 End Sub
