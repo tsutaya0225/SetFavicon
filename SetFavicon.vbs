@@ -14,7 +14,7 @@ Dim arrArgs: Set arrArgs=WScript.Arguments
 
 '引数がなければ終了
 If arrArgs.Count=0 Then
-	MsgBox("ファイルまたはフォルダをドロップしてください。", vbOkOnly+vbInformation, "SetFavicon")
+	MsgBox "ファイルまたはフォルダをドロップしてください。", vbOkOnly+vbInformation, "SetFavicon"
 	Wscript.Quit
 End If
 
@@ -24,7 +24,7 @@ If Not objFS.FolderExists(faviconPath) Then objFS.CreateFolder(faviconPath)
 
 'main()
 	RecProcess arrArgs
-	MsgBox("終了しました。", vbOkOnly+vbInformation, "SetFavicon")
+	MsgBox "終了しました。", vbOkOnly+vbInformation, "SetFavicon"
 	Set objShell=Nothing: Set objFS=Nothing
 'end of main
 
@@ -38,7 +38,7 @@ Sub RecProcess(arrArgs)
 			RecProcess objFS.GetFolder(path).Files
 			RecProcess objFS.GetFolder(path).SubFolders
 		Else
-			MsgBox(path & "は存在しません。" & vbCrLf & "次のファイルを処理します。", vbOKOnly+vbExclamation, "SetFavicon")
+			MsgBox path & "は存在しません。" & vbCrLf & "次のファイルを処理します。", vbOKOnly+vbExclamation, "SetFavicon"
 		End if
 	Next
 End Sub
@@ -63,22 +63,22 @@ Sub SetFavicon(srcFilename)
 							Case vbYes
 								'何もしない
 							Case vbNo
-								MsgBox(srcFilename & "は処理しませんでした。" & "次のファイルを処理します。", vbOkOnly+vbInformation, "SetFavicon")
+								MsgBox srcFilename & "は処理しませんでした。" & "次のファイルを処理します。", vbOkOnly+vbInformation, "SetFavicon"
 								Exit Sub
 							Case Else
-								MsgBox()"未定義のエラーです。" & vbCrLf & "次のファイルを処理します。", vbOkOnly+vbCritical, "SetFavicon")
+								MsgBox "未定義のエラーです。" & vbCrLf & "次のファイルを処理します。", vbOkOnly+vbCritical, "SetFavicon"
 								Exit Sub
 						End Select
 					End If
 				Case vbNo
-					MsgBox(srcFilename & "は処理しませんでした。" & vbCrLf & "次のファイルを処理します。", vbOkOnly+vbInformation, "SetFavicon")
+					MsgBox srcFilename & "は処理しませんでした。" & vbCrLf & "次のファイルを処理します。", vbOkOnly+vbInformation, "SetFavicon"
 					Exit Sub
 				Case Else
-					MsgBox("未定義のエラーです。" & vbCrLf & "次のファイルを処理します。", vbOkOnly+vbCritical, "SetFavicon")
+					MsgBox "未定義のエラーです。" & vbCrLf & "次のファイルを処理します。", vbOkOnly+vbCritical, "SetFavicon"
 					Exit Sub
 			End Select
 		Case Else
-			MsgBox(srcFilename & "はインターネットショートカットではありません。" & vbCrLf & "次のファイルを処理します。", vbOkOnly+vbExclamation, "SetFavicon")
+			MsgBox srcFilename & "はインターネットショートカットではありません。" & vbCrLf & "次のファイルを処理します。", vbOkOnly+vbExclamation, "SetFavicon"
 			Exit Sub
 	End Select
 
@@ -102,7 +102,7 @@ Sub SetFavicon(srcFilename)
 		End Select
 	Loop
 	If strURL="" Then
-		MsgBox(srcFilename & "には、URLが設定されていません。" & vbCrLf & "次のファイルを処理します。", vbOkOnly+vbExclamation, "SetFavicon")
+		MsgBox srcFilename & "には、URLが設定されていません。" & vbCrLf & "次のファイルを処理します。", vbOkOnly+vbExclamation, "SetFavicon"
 		Exit Sub
 	End If
 	objsrcFile.Close
@@ -143,7 +143,7 @@ Sub SetFavicon(srcFilename)
 	If faviconURL="" And strIconFile<>"" Then
 		faviconURL=strIconFile
 	Else 'IconFileが特定できなかった場合
-		MsgBox(srcFilename & "にはアイコンが設定されていません。" & vbCrLf & "次のファイルを処理します。", vbOkOnly+vbExclamation, "SetFavicon")
+		MsgBox srcFilename & "にはアイコンが設定されていません。" & vbCrLf & "次のファイルを処理します。", vbOkOnly+vbExclamation, "SetFavicon"
 		Exit Sub
 	End If
 '	出力テスト
@@ -169,7 +169,7 @@ Sub SetFavicon(srcFilename)
 		objStream.Close
 		Set objStream=Nothing
 	Else
-		MsgBox("アイコンのダウンロードに失敗しました。" & vbCrLf & faviconURL & vbCrLf,  "次のファイルを処理します。", vbOkOnly+vbExclamation, "SetFavicon")
+		MsgBox "アイコンのダウンロードに失敗しました。" & vbCrLf & faviconURL & vbCrLf,  "次のファイルを処理します。", vbOkOnly+vbExclamation, "SetFavicon"
 		exit Sub
 	End If
 	Set objXmlHttp=Nothing
@@ -198,5 +198,5 @@ Sub SetFavicon(srcFilename)
 	'リネームした.urlファイルを元に戻す
 	objShell.MoveFile tmpfilename, dstFilename
 '	出力テスト
-	MsgBox("End of SubRoutine", vbOkOnly, "test")
+	MsgBox "End of SubRoutine", vbOkOnly, "test"
 End Sub
